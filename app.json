@@ -1,0 +1,88 @@
+{
+    "id": "com.roco.slideshow",
+    "sdk": 2,
+    "name": {
+        "en": "slideshow",
+		"nl": "slideshow"
+    },
+    "description": {
+        "en": "View a slideshow of for example our favourite Dutch politician",
+		"nl": "Kijk naar een fotoshow van bijvoorbeeld onze favoriete Nederlandse politica"
+    },
+    "category": "tools",
+    "version": "0.1.4",
+    "compatibility": ">=1.5.0",
+    "author": {
+        "name": "Rocodamelshe",
+        "email": ""
+    },
+    "images": {
+        "large": "/assets/images/large.jpg",
+        "small": "/assets/images/small.jpg"
+    },
+	"flow": {
+		"triggers": [
+			{
+				"id": "new_slideshow_pic",
+				"title": {
+					"en": "There's a new slideshow pic",
+					"nl": "Er is een nieuwe slideshow foto"
+				},
+				"tokens": [
+					{
+						"name": "item",
+						"type": "string",
+						"title": {
+							"en": "latest pic",
+							"nl": "nieuwste foto"
+						}
+					},
+					{
+						"name": "pctitle",
+						"type": "string",
+						"title": {
+							"en": "pic-title",
+							"nl": "foto-naam"
+						}
+					},
+					{
+						"name": "tijd",
+						"type": "string",
+						"title": {
+							"en": "time",
+							"nl": "tijd"
+						}
+					}
+				]
+			}
+        ],
+		"actions": [
+			{
+				"id": "start_play",
+				"title": {
+					"en": "Start playing pics (delay)",
+					"nl": "start met foto's (pauze)"
+				},
+			"args": [
+						{
+							"name": "pauze",
+							"type": "number",
+							"min": "1",
+							"max": "3600",
+							"placeholder": {
+								"en": "1...3600",
+								"nl": "1...3600"
+							}
+						}
+					]
+			},
+			{
+				"id": "stop_play",
+				"title": {
+					"en": "Pauze playing pics",
+					"nl": "Pauzeer foto's"
+				}
+			}
+		]
+	}
+}

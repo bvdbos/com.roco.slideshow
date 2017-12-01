@@ -1,0 +1,15 @@
+{
+	"settings": {
+		"title": "Slideshow Instellingen",
+		"intro": "voeg hier uw Slideshows toe",
+		"replace_title": "let op",
+		"replace_info": "Voorlopig alleen HTTPS.",
+		"textnumber_title": "nog te doen:",
+		"textnumber_info": "<A HREF='https://github.com/bvdbos/com.sasteren.radio'>veel</A>",
+		"replace_items": "Slideshow-urls",
+		"replace_add_button": "Slideshow toevoegen",
+		"radio_url": "Slideshow url",
+		"radio_name": "Slideshow naam",
+		"textnumber_checkbox": "doet nog niets"
+	}
+}

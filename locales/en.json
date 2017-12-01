@@ -1,0 +1,15 @@
+{
+	"settings": {
+		"title": "Slideshow Settings",
+		"intro": "add your Slideshows here",
+		"replace_title": "watch out",
+		"replace_info": "Just HTTPS for now.",
+		"textnumber_title": "to do:",
+		"textnumber_info": "<A HREF='https://github.com/bvdbos/com.sasteren.radio'>a lot</A>",
+		"replace_items": "slideshow-urls",
+		"replace_add_button": "add slideshow",
+		"slideshow_url": "slideshow url",
+		"slideshow_name": "slideshow titel",
+		"textnumber_checkbox": "does nothing yet"
+	}
+}
