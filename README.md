@@ -22,5 +22,5 @@ use normal URL's too
 * enable trigger for new submissions
 
 ## Changelog
-v0.1.0 (30-11-2017) first version
+v0.1.0 (30-11-2017) first version  
 v0.1.6 (04-12-2017) Changed images and icon
