@@ -60,8 +60,8 @@
 			{
 				"id": "start_play",
 				"title": {
-					"en": "Start playing pics (delay)",
-					"nl": "start met foto's (pauze)"
+					"en": "Start playing all pics (delay)",
+					"nl": "start met alle foto's (pauze)"
 				},
 			"args": [
 						{
@@ -72,6 +72,14 @@
 							"placeholder": {
 								"en": "1...3600",
 								"nl": "1...3600"
+							}
+						},
+						{
+							"type": "autocomplete",
+							"name": "list_sources",
+							"placeholder": {
+								"en": "choose slideshow",
+								"nl": "kies fotoshow"
 							}
 						}
 					]
@@ -98,6 +106,14 @@
 							"placeholder": {
 								"en": "1...3600",
 								"nl": "1...3600"
+							}
+						},
+						{
+							"type": "autocomplete",
+							"name": "list_sources",
+							"placeholder": {
+								"en": "choose slideshow",
+								"nl": "kies fotoshow"
 							}
 						}
 					]
