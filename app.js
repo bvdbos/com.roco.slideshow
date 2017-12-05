@@ -13,6 +13,8 @@ var tokenval
 var refreshIntervalId
 var statusplay
 let triggercard
+let startPlayAction
+let randomPlayAction
 
 class Slideshow extends Homey.App {	
 	onInit() {
@@ -40,29 +42,33 @@ class Slideshow extends Homey.App {
 					return Promise.resolve( isStopped );
 				});
 
-		let startPlayAction = new Homey.FlowCardAction('start_play');
+		startPlayAction = new Homey.FlowCardAction('start_play');
 			startPlayAction
 				.register()
 				.registerRunListener(( args, state ) => {
 					var pauze = args.pauze;
+					var chosen = args.list_sources.description || "all slideshows"
 					if (statusplay = true) {
 						clearInterval(refreshIntervalId)
 					}
-					play(pauze);
+					play(pauze, chosen);
 					statusplay = true
 					let isStarted = true; // true or false
 					return Promise.resolve( isStarted );
-				});
+				})
 				
-		let randomPlayAction = new Homey.FlowCardAction('random_play');
+			
+				
+		randomPlayAction = new Homey.FlowCardAction('random_play');
 			randomPlayAction
 				.register()
 				.registerRunListener(( args, state ) => {
 					var pauze = args.pauze;
+					var chosen = args.list_sources.description || "all slideshows"
 					if (statusplay = true) {
 						clearInterval(refreshIntervalId)
 					}
-					randomplay(pauze);
+					randomplay(pauze, chosen);
 					statusplay = true
 					let isStarted = true; // true or false
 					return Promise.resolve( isStarted );
@@ -72,9 +78,27 @@ class Slideshow extends Homey.App {
 			getsettings().then(function(settings) {
 				urllist=settings;
 				Homey.app.log(urllist)
+				startPlayAction.getArgument('list_sources').registerAutocompleteListener(query => {
+					var templist = []
+					templist.push ({name: 'all', description: 'all slideshows'})
+					urllist.forEach(function(listobject) {
+						templist.push ({name: listobject.name, description: listobject.url})
+					})
+					return Promise.resolve(templist)
+				})
+				randomPlayAction.getArgument('list_sources').registerAutocompleteListener(query => {
+					var templist = []
+					templist.push ({name: 'all', description: 'all slideshows'})
+					urllist.forEach(function(listobject) {
+						templist.push ({name: listobject.name, description: listobject.url})
+					})
+					return Promise.resolve(templist)
+				})
 				readfeeds().then(function(results) {
 					Homey.app.log("feeds read from changing settings");
 					playlist=results;
+					Homey.app.log("playlist after settings read")
+					Homey.app.log("data is ", data.length)
 				})		
 			});
 		});
@@ -82,12 +106,31 @@ class Slideshow extends Homey.App {
 		getsettings().then(function(settings) {
 			Homey.app.log("initial settings read");
 			urllist=settings;
-			Homey.app.log(urllist);
+			
+			startPlayAction.getArgument('list_sources').registerAutocompleteListener(query => {
+				var templist = []
+				templist.push ({name: 'all', description: 'all slideshows'})
+				urllist.forEach(function(listobject) {
+					templist.push ({name: listobject.name, description: listobject.url})
+				})
+				return Promise.resolve(templist)
+			})
+			
+			randomPlayAction.getArgument('list_sources').registerAutocompleteListener(query => {
+				var templist = []
+				templist.push ({name: 'all', description: 'all slideshows'})
+				urllist.forEach(function(listobject) {
+					templist.push ({name: listobject.name, description: listobject.url})
+				})
+				return Promise.resolve(templist)
+			})
+			
 			readfeeds().then(function(results) {
 				playlist=results;
 				Homey.app.log("initial playlist and data read")
 				Homey.app.log("data is ", data.length)
 			})
+			
 		})
 	}
 }
@@ -146,32 +189,49 @@ function getsettings() {
 	})
 }	
 
+function filterdata(chosen) {
+	if (chosen != "all slideshows") {
+		var playl = [];
+		for (var k = 0; k < data.length; k++) {
+			if (data[k].source == chosen) {
+				playl.push(data[k]);
+			}
+		}
+	} else {
+		var playl = data
+	}
+	return playl
+}
 
-function play (pauze) {
-	var total = data.length;
+function play (pauze, chosen) {
+	console.log("chosen ", chosen)
+	var playl = filterdata(chosen)
+	var total = playl.length;
 	var counter = 0;	
 	Homey.app.log("play all, items ", total)
 	refreshIntervalId = setInterval(() => {
 		if (counter > total-1) { counter = 0; }
-		Homey.app.log (counter)
-		Homey.app.log (data[counter])
-		tokenval.setValue(data[counter].item);
-		triggercard.trigger(data[counter]);
+		//Homey.app.log (counter)
+		Homey.app.log (playl[counter])
+		tokenval.setValue(playl[counter].item);
+		triggercard.trigger(playl[counter]);
 		counter = counter+1;
 	}, pauze * 1000);
 }
 
-function randomplay (pauze) {
-	var total = data.length;
-	var counter = 0
+function randomplay (pauze, chosen) {
+	console.log("chosen ", chosen)
+	var playl = filterdata(chosen)
+	console.log (playl)
+	var total = playl.length;
+	var counter = 0;	
 	Homey.app.log("play random, items ", total)
 	refreshIntervalId = setInterval(() => {
 		counter=getRandomInt(0,total-1)
 		Homey.app.log (counter)
-		Homey.app.log (data[counter])
-		tokenval.setValue(data[counter].item);
-		triggercard.trigger(data[counter]);
-		counter = counter+1;
+		Homey.app.log (playl[counter])
+		tokenval.setValue(playl[counter].item);
+		triggercard.trigger(playl[counter]);
 	}, pauze * 1000);
 }
 
@@ -183,6 +243,7 @@ function getRandomInt(min, max) {
 
 async function readfeeds() {
 		var temparray = [];
+		data = []
 		for(var i = 0; i < urllist.length; i++) {
 				var obj = urllist[i];
 				Homey.app.log("readfeed ", obj.url);
@@ -247,7 +308,7 @@ function readfeed(feedurl) { //returns an array of playlists
 						url: feedurl,
 						id: pl.title,
 						title: pl.title,
-						tracks: parseTracks(pl.items) || false,
+						tracks: parseTracks(pl.items, feedurl) || false,
 					};
 					
 				parser.on('error', err => { Homey.app.log(err) })
@@ -264,13 +325,13 @@ function readfeed(feedurl) { //returns an array of playlists
 
 	
 	
-function parseTracks(tracks) {
+function parseTracks(tracks, feedurl) {
 	const result = [];
 	if (!tracks) {
 		return result;
 	}
 	tracks.forEach((track) => {
-		const parsedTrack = parseTrack(track);
+		const parsedTrack = parseTrack(track,feedurl);
 		if (parsedTrack !== null) {
 			parsedTrack.confidence = 0.5;
 			result.push(parsedTrack);
@@ -279,17 +340,19 @@ function parseTracks(tracks) {
 	return result;
 }
 
-function parseTrack(track) {
+function parseTrack(track,feedurl) {
 
 	//create data-items
 	var item = track.description
+    var pubdate = track.pubdate || ""
 	item.replace(/</g,'&lt;').replace(/>/g,'&gt;')
 	var patt = /src="([^"]+)"/g
 	var c2 = item.match(patt);
-	Homey.app.log(c2)
+	//Homey.app.log(c2)
 	for (var j = 0, len2 = c2.length; j < len2; j++) {
 		var turl = c2[j].substring(5,c2[j].length-1)
-		var tobj = {'item': turl, 'tijd': '', 'pctitle': track.title};
+		var tobj = {'source': feedurl, 'item': turl, 'tijd': pubdate, 'pctitle': track.title};
+		console.log(tobj)
 		data.push(tobj)
 	}
 			
@@ -298,7 +361,7 @@ function parseTrack(track) {
 		id: track.guid,
 		title: track.title,
 		description: track.description,
-		release_date: dateformat(track.pubdate, "yyyy-mm-dd"),
+		release_date: dateformat(track.pubdate || ""),
 	}
 }
 
