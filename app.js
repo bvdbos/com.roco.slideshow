@@ -255,6 +255,8 @@ async function readfeeds() {
 	
 function readfeed(feedurl) { //returns an array of playlists
 	return new Promise(resolve => {
+		
+		if (feedurl.substring(0,5) == "https") {		
 			https.get(feedurl, function(res) {
 				var parser = new FeedMe(true);
 				var teller=0;
@@ -315,7 +317,36 @@ function readfeed(feedurl) { //returns an array of playlists
 				
 				resolve(result);
 				});	
-			});		
+			});	
+		} else { //http-url
+			http.get(feedurl, function(res) {
+				var parser = new FeedMe(true);
+				var teller=0;
+					
+				res.pipe(parser);			
+
+				parser.on('end', function() {
+					Homey.app.log("parser ended")
+					var pl = parser.done();
+					Homey.app.log("parser.done")
+					//Homey.app.log(pl)
+					var result = {
+						type: 'photolist',
+						url: feedurl,
+						id: pl.title,
+						title: pl.title,
+						tracks: parseTracks(pl.items, feedurl) || false,
+					};
+					
+				parser.on('error', err => { Homey.app.log(err) })
+				
+				resolve(result);
+				});	
+			});	
+		}			
+			
+			
+			
 	}
 	
 	
@@ -348,12 +379,14 @@ function parseTrack(track,feedurl) {
 	item.replace(/</g,'&lt;').replace(/>/g,'&gt;')
 	var patt = /src="([^"]+)"/g
 	var c2 = item.match(patt);
-	//Homey.app.log(c2)
+	Homey.app.log(c2)
+	if (c2 != null) {
 	for (var j = 0, len2 = c2.length; j < len2; j++) {
 		var turl = c2[j].substring(5,c2[j].length-1)
 		var tobj = {'source': feedurl, 'item': turl, 'tijd': pubdate, 'pctitle': track.title};
 		console.log(tobj)
 		data.push(tobj)
+	}
 	}
 			
 	return {
