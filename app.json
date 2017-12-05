@@ -32,6 +32,7 @@
 					{
 						"name": "item",
 						"type": "string",
+						"example": "https://en.wikipedia.org/wiki/Effects_of_global_warming#/media/File:Diagram_showing_ten_indicators_of_global_warming.png",
 						"title": {
 							"en": "latest pic",
 							"nl": "nieuwste foto"
@@ -40,6 +41,7 @@
 					{
 						"name": "pctitle",
 						"type": "string",
+						"example": "global warming pics",
 						"title": {
 							"en": "pic-title",
 							"nl": "foto-naam"
@@ -48,6 +50,7 @@
 					{
 						"name": "tijd",
 						"type": "string",
+						"example": "05-12-2017",
 						"title": {
 							"en": "time",
 							"nl": "tijd"
