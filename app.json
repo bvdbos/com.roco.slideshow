@@ -10,7 +10,7 @@
 		"nl": "Kijk naar een fotoshow van bijvoorbeeld onze favoriete Nederlandse politica"
     },
     "category": "tools",
-    "version": "0.1.7",
+    "version": "0.1.8",
     "compatibility": ">=1.5.0",
     "author": {
         "name": "Rocodamelshe",
