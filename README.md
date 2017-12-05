@@ -4,11 +4,11 @@ Show a slideshow on your chromecast
 
 ## Usage
 Start playing  
-![Startplaying](assets/images/startplaying.png)
+![Startplaying](https://github.com/Rocodamelshe/com.roco.slideshow/blob/master/assets/images/startplaying.png?raw=true)
 Show picture  
-![Showpicture](assets/images/showpicture.png)
+![Showpicture](https://github.com/Rocodamelshe/com.roco.slideshow/blob/master/assets/images/showpicture.png?raw=true)
 Stop playing  
-![Stopplaying](assets/images/stopplaying.png)
+![Stopplaying](https://github.com/Rocodamelshe/com.roco.slideshow/blob/master/assets/images/stopplaying.png?raw=true)
 
 ## examples to use  
 https://www.pinterest.co.uk/gabydmxx/the-big-bang-theory.rss/  
