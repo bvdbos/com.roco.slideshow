@@ -4,18 +4,16 @@ Show a slideshow on your chromecast
 
 ## Usage
 Start playing  
-![Startplaying](assets/images/startplaying.png)
+![Startplaying](https://github.com/Rocodamelshe/com.roco.slideshow/blob/master/assets/images/startplaying.png?raw=true)
 Show picture  
-![Showpicture](assets/images/showpicture.png)
+![Showpicture](https://github.com/Rocodamelshe/com.roco.slideshow/blob/master/assets/images/showpicture.png?raw=true)
 Stop playing  
-![Stopplaying](assets/images/stopplaying.png)
+![Stopplaying](https://github.com/Rocodamelshe/com.roco.slideshow/blob/master/assets/images/stopplaying.png?raw=true)
 
 ## examples to use  
 https://www.pinterest.co.uk/gabydmxx/the-big-bang-theory.rss/  
 https://nl.pinterest.com/sventhesearcher/kaley-cuoco.rss/  
-https://nl.pinterest.com/hoefhoef/btvs.rss/  
-https://www.pinterest.co.uk/stof3/ancilla-tilia.rss/  
-https://nl.pinterest.com/elturix80/ancilla-tilia.rss/  
+https://nl.pinterest.com/hoefhoef/btvs.rss/   
 
 ## to do:
 * add more pics, **never enough !**  
@@ -24,4 +22,5 @@ use normal URL's too
 * enable trigger for new submissions
 
 ## Changelog
-v0.1.0 (30-11-2017) first version
+v0.1.0 (30-11-2017) first version  
+v0.1.6 (04-12-2017) Changed images and icon
