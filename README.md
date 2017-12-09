@@ -22,14 +22,15 @@ https://greenpeace.tumblr.com/rss
 https://nl.pinterest.com/acehundscheid/marijke-helwegen.rss/
 http://ancilliatiliacurves.tumblr.com/rss
 http://syndication.eonline.com/syndication/feeds/rssfeeds/style.xml
+https://websta.me/rss/tag/klokgebouw
 
 ## to do:
 * add more pics, **never enough !**  
-* instagram-support  
+* <strike>instagram-support  </strike>  
 * devianart-support  
-<strike>* use normal URL's too</strike>  
-<strike>* use more then 25 pics per board</strike>  
-<strike>* enable trigger for new submissions</strike>  
+* <strike>use normal URL's too</strike>   
+* <strike>use more then 25 pics per board</strike>  
+* <strike>enable trigger for new submissions</strike>  
 
 ## Changelog
 v0.1.0 (30-11-2017) first version   
@@ -37,3 +38,4 @@ v0.1.6 (04-12-2017) Changed images and icon
 v0.1.7 (05-12-2017) Added examples for flow testing  
 v0.1.8 (05-12-2017) allow for http-urls too  
 v0.2.0 (09-12-2017) added triggercard for new submissions, deleted global token
+v0.2.1 (09-12-2017) better pic-recognition, support websta.me (instagram)

@@ -236,12 +236,13 @@ function play (pauze, chosen) {
 function randomplay (pauze, chosen) {
 	console.log("random play ", chosen)
 	var playl = filterdata(chosen)
-	console.log(total, " items")
 	var total = playl.length;
+	console.log(total, " items")
 	var counter = 0;	
 	refreshIntervalId = setInterval(() => {
 		counter=getRandomInt(0,total-1)
 		Homey.app.log (counter)
+		console.log(playl[counter])
 		//tokenval.setValue(playl[counter].item);
 		triggercard.newslideshowpic.trigger(playl[counter]);
 	}, pauze * 1000);
@@ -277,7 +278,8 @@ function readfeed(feedurl) { //returns an array of playlists
 							if (newtimestamp > oldtimestamp) { //new item						
 								urllist[objIndex].latestbroadcast = newtimestamp
 								var c3 = getimages(item.description)
-								var firstpic = c3[0].substring(5,c3[0].length-1)
+								//var firstpic = c3[0].substring(5,c3[0].length-1)
+								var firstpic = c3[0]
 								urllist[objIndex].latesturl = firstpic;
 								let tokens = {
 									'item': firstpic || "",
@@ -397,8 +399,8 @@ function parseTrack(track,feedurl) {
 	var c2 = getimages(item);
 	if (c2 != null) {
 		for (var j = 0, len2 = c2.length; j < len2; j++) {
-			var turl = c2[j].substring(5,c2[j].length-1)
-			var tobj = {'source': feedurl, 'item': turl, 'tijd': pubdate, 'pctitle': track.title};
+			//var turl = c2[j].substring(5,c2[j].length-1)
+			var tobj = {'source': feedurl, 'item': c2[j], 'tijd': pubdate, 'pctitle': track.title};
 			//console.log(tobj)
 			data.push(tobj)
 		}
@@ -413,10 +415,15 @@ function parseTrack(track,feedurl) {
 }
 
 function getimages(item) {
-	item.replace(/</g,'&lt;').replace(/>/g,'&gt;')
-	var patt = /src="([^"]+)"/g
+	//console.log(item) 
+	//item.replace(/</g,'&lt;').replace(/>/g,'&gt;')
+	//var patt = /src="([^"]+)"/g
+	//var patt = /([a-z\-_0-9\/\:\.]*\.(jpg|jpeg|png|gif))/g
+	var patt = /http[^" ]*?\.(jpg|png|png|gif)/g
 	var c2 = item.match(patt);
+	console.log(c2)
 	return c2
+	
 }
 
 function getRandomInt(min, max) {
