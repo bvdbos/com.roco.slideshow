@@ -11,7 +11,7 @@ Show picture
 Stop playing  
 ![Stopplaying](https://github.com/Rocodamelshe/com.roco.slideshow/blob/master/assets/images/stopplaying.png?raw=true)
 Trigger on new pictures    
-![Trigger](https://github.com/Rocodamelshe/com.roco.slideshow/blob/master/assets/images/startplaying.png?raw=true)
+![Trigger](https://github.com/Rocodamelshe/com.roco.slideshow/blob/master/assets/images/triggerpic.png?raw=true)
 
 
 ## examples to use  
