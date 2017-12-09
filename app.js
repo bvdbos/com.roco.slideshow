@@ -5,7 +5,7 @@ const dateformat = require('dateformat');
 var FeedMe = require('feedme');
 var http = require('http');
 var https = require('https');
-var urllist = []; //array with {name,url,latestbroadcast,latesturl,token} feeds from settings
+var urllist = []; //array with {name,url,latestbroadcast,latesturl} feeds from settings
 var data = []; //name with image-urls
 var playlist = []; //array of playlists
 var total = 0
@@ -13,24 +13,31 @@ var tokenval
 var refreshIntervalId
 var statusplay
 let triggercard
+let newpicpostedcard
 let startPlayAction
 let randomPlayAction
+var pollingtime = 900000
 
 class Slideshow extends Homey.App {	
 	onInit() {
 		Homey.app.log('Slideshow starting');
 		
-		triggercard = new Homey.FlowCardTrigger('new_slideshow_pic');
-		triggercard.register();
-			
-		tokenval = new Homey.FlowToken( 'slide', {
-						type: 'string',
-						title: 'slide'
-					});
-				tokenval.register()
-					.then(() => {
-						return tokenval.setValue( null );
-					})			
+		triggercard = {
+			'newpicpostedcard': new Homey.FlowCardTrigger('new_slideshow_pic_spotted'),
+			'newslideshowpic': new Homey.FlowCardTrigger('new_slideshow_pic')
+		};
+		
+		triggercard.newpicpostedcard.register();
+		triggercard.newslideshowpic.register();
+
+		//tokenval = new Homey.FlowToken( 'slide', {
+		//				type: 'string',
+		//				title: 'slide'
+		//			});
+		//tokenval.register()
+		//			.then(() => {
+		//				return tokenval.setValue( null );
+		//			})			
 			
 		let stopPlayAction = new Homey.FlowCardAction('stop_play');
 			stopPlayAction
@@ -77,7 +84,7 @@ class Slideshow extends Homey.App {
 		Homey.ManagerSettings.on('set', function(settings) {
 			getsettings().then(function(settings) {
 				urllist=settings;
-				Homey.app.log(urllist)
+				//Homey.app.log(urllist)
 				startPlayAction.getArgument('list_sources').registerAutocompleteListener(query => {
 					var templist = []
 					templist.push ({name: 'all', description: 'all slideshows'})
@@ -97,7 +104,6 @@ class Slideshow extends Homey.App {
 				readfeeds().then(function(results) {
 					Homey.app.log("feeds read from changing settings");
 					playlist=results;
-					Homey.app.log("playlist after settings read")
 					Homey.app.log("data is ", data.length)
 				})		
 			});
@@ -132,8 +138,22 @@ class Slideshow extends Homey.App {
 			})
 			
 		})
+		
+		startPollingForUpdates();
+
 	}
 }
+
+function startPollingForUpdates() {
+	var pollingInterval = setInterval(() => {
+		console.log("poll feeds")
+		readfeeds().then(function(results) {
+			//playlist=results;
+			//Homey.app.log("playlist and data read")
+			Homey.app.log("feeds polled, data is ", data.length)
+		})	
+	}, pollingtime);
+};
 
 //get name and url list from settings and create array
 function getsettings() {
@@ -150,32 +170,26 @@ function getsettings() {
 			});
 		
 			//then for each item read from settings, check if it already exists and take data
-			newlist.forEach(function(listobject) {
-				var objIndex = urllist.findIndex(obj => obj.url == listobject.url);
-				Homey.app.log ("objIndex ", objIndex, "in urllist voor ",listobject.url);
-				//if it exists then take it's settings
-				if (objIndex > -1) {
-					Homey.app.log("gegevens overnemen");
-					listobject.latestbroadcast = urllist[objIndex].latestbroadcast;
-					listobject.latesturl = urllist[objIndex].latesturl;
-				//if it doesn't exist then create items
-				} else {
-					listobject.latestbroadcast = null;
-					listobject.latesturl = "";
-				}
-			});
+			if (newlist.length > 0) { //shouldn't be necessarry as replText returned an object
+				newlist.forEach(function(listobject) {
+					var objIndex = urllist.findIndex(obj => obj.url == listobject.url);
+					//if it exists then take it's settings
+					if (objIndex > -1) {
+						listobject.latestbroadcast = urllist[objIndex].latestbroadcast;
+						listobject.latesturl = urllist[objIndex].latesturl;
+					//if it doesn't exist then create items
+					} else {
+						listobject.latestbroadcast = null;
+						listobject.latesturl = "";
+					}
+				});
+			}
 			
-			Homey.app.log("newlist created")
-			Homey.app.log(newlist)
-			Homey.app.log("now lets delete items which should be deleted")
-			
-			//were items deleted?
+			//check if items were deleted
 			if (urllist.length > 0) {
 				urllist.forEach(function(listobject) {
-					Homey.app.log("listobject from old urllist")
-					Homey.app.log(listobject)
+					//Homey.app.log(listobject)
 					var objIndex = newlist.findIndex(obj => obj.url == listobject.url);
-					Homey.app.log("listobject in old list ", objIndex);
 					if (objIndex < 0) {
 						Homey.app.log("an item from oldlist is not in the new list")
 					} else {
@@ -183,7 +197,8 @@ function getsettings() {
 					}
 				});
 			}
-			Homey.app.log("so now we have a newlist array")
+
+			//so now we have a newlist array
 			resolve(newlist)
 		}
 	})
@@ -204,41 +219,32 @@ function filterdata(chosen) {
 }
 
 function play (pauze, chosen) {
-	console.log("chosen ", chosen)
+	console.log("sequential play ", chosen)
 	var playl = filterdata(chosen)
 	var total = playl.length;
+	console.log(total, " items")
 	var counter = 0;	
-	Homey.app.log("play all, items ", total)
 	refreshIntervalId = setInterval(() => {
 		if (counter > total-1) { counter = 0; }
-		//Homey.app.log (counter)
-		Homey.app.log (playl[counter])
-		tokenval.setValue(playl[counter].item);
-		triggercard.trigger(playl[counter]);
+		Homey.app.log (counter)
+		//tokenval.setValue(playl[counter].item);
+		triggercard.newslideshowpic.trigger(playl[counter]);
 		counter = counter+1;
 	}, pauze * 1000);
 }
 
 function randomplay (pauze, chosen) {
-	console.log("chosen ", chosen)
+	console.log("random play ", chosen)
 	var playl = filterdata(chosen)
-	console.log (playl)
+	console.log(total, " items")
 	var total = playl.length;
 	var counter = 0;	
-	Homey.app.log("play random, items ", total)
 	refreshIntervalId = setInterval(() => {
 		counter=getRandomInt(0,total-1)
 		Homey.app.log (counter)
-		Homey.app.log (playl[counter])
-		tokenval.setValue(playl[counter].item);
-		triggercard.trigger(playl[counter]);
+		//tokenval.setValue(playl[counter].item);
+		triggercard.newslideshowpic.trigger(playl[counter]);
 	}, pauze * 1000);
-}
-
-function getRandomInt(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
 }
 
 async function readfeeds() {
@@ -246,7 +252,6 @@ async function readfeeds() {
 		data = []
 		for(var i = 0; i < urllist.length; i++) {
 				var obj = urllist[i];
-				Homey.app.log("readfeed ", obj.url);
 				var item = await readfeed(obj.url);
 				temparray.push (item);
 		};
@@ -256,55 +261,46 @@ async function readfeeds() {
 function readfeed(feedurl) { //returns an array of playlists
 	return new Promise(resolve => {
 		
+		//for https-urls
 		if (feedurl.substring(0,5) == "https") {		
 			https.get(feedurl, function(res) {
+				console.log("get https-feed ", feedurl)
 				var parser = new FeedMe(true);
-				var teller=0;
-		
-				/*
+				var teller=0;					
+				res.pipe(parser);			
 				parser.on('item', (item) => {
 					if (teller === 0) { //only on first item
-						var objIndex = urllist.findIndex((obj => obj.url == url));
-						Homey.app.log(objIndex);
+						var objIndex = urllist.findIndex((obj => obj.url == feedurl)); //get correct item from urllist
 						if (urllist[objIndex].latestbroadcast != null) { //already a latest url in tag
 							var oldtimestamp = urllist[objIndex].latestbroadcast;
-							var oldurl=urllist[objIndex].latesturl;
 							var newtimestamp = Date.parse(item.pubdate)/1000;
-							if (newtimestamp > oldtimestamp) { //new item
+							if (newtimestamp > oldtimestamp) { //new item						
 								urllist[objIndex].latestbroadcast = newtimestamp
-								urllist[objIndex].token.setValue(item.enclosure.url);
-								urllist[objIndex].latesturl = item.enclosure.url;
-								
-								//here a trigger should be fired
+								var c3 = getimages(item.description)
+								var firstpic = c3[0].substring(5,c3[0].length-1)
+								urllist[objIndex].latesturl = firstpic;
 								let tokens = {
-									'item': item.enclosure.url,
-									'tijd': item.pubdate,
-									'vctitle': urllist[objIndex].name,
+									'item': firstpic || "",
+									'pictitle': item.title,
+									'pcname': urllist[objIndex].name,
+									'tijd': item.pubdate									
 								}
-								Homey.app.log(tokens);
-								//Homey.app.log(urllist[objIndex].flowTriggers.newvodcast);
-								urllist[objIndex].flowTriggers.newvodcast.trigger(tokens).catch( this.error );
-								
+								triggercard.newpicpostedcard.trigger(tokens)	
 								
 							} else {
 								//no new item
 							}
-						} else { //set first url in tag
-							urllist[objIndex].token.setValue(item.enclosure.url);						
-							urllist[objIndex].latesturl = item.enclosure.url;
+						} else { //no latestbroadcast so set first url in tag
+							urllist[objIndex].latesturl = item.guid
 							urllist[objIndex].latestbroadcast = Date.parse(item.pubdate)/1000;
 						}
 						teller=teller+1; //only first item
 					};	
 				});
-				*/				
-				res.pipe(parser);			
+										
 
 				parser.on('end', function() {
-					Homey.app.log("parser ended")
 					var pl = parser.done();
-					Homey.app.log("parser.done")
-					//Homey.app.log(pl)
 					var result = {
 						type: 'photolist',
 						url: feedurl,
@@ -320,16 +316,45 @@ function readfeed(feedurl) { //returns an array of playlists
 			});	
 		} else { //http-url
 			http.get(feedurl, function(res) {
+				console.log("get http-feed ", feedurl)
 				var parser = new FeedMe(true);
-				var teller=0;
+				var teller=0;					
+				res.pipe(parser);
+				
+				parser.on('item', (item) => {
+					if (teller === 0) { //only on first item
+						var objIndex = urllist.findIndex((obj => obj.url == feedurl)); //get correct item from urllist
+						if (urllist[objIndex].latestbroadcast != null) { //already a latest url in tag
+							var oldtimestamp = urllist[objIndex].latestbroadcast;
+							var newtimestamp = Date.parse(item.pubdate)/1000;
+							if (newtimestamp > oldtimestamp) { //new item
+								urllist[objIndex].latestbroadcast = newtimestamp
+								var c3 = getimages(item.description)
+								var firstpic = c3[0].substring(5,c3[0].length-1)
+								urllist[objIndex].latesturl = firstpic;
+								let tokens = {
+									'item': firstpic || "",
+									'pictitle': item.title,
+									'pcname': urllist[objIndex].name,
+									'tijd': item.pubdate									
+								}
+								triggercard.newpicpostedcard.trigger(tokens)	
+								
+							} else {
+								//no new item
+							}
+						} else { //no latestbroadcast so set first url in tag
+							urllist[objIndex].latesturl = ""
+							urllist[objIndex].latestbroadcast = Date.parse(item.pubdate)/1000;
+						}
+						teller=teller+1; //only first item
+					};	
+				});
+						
 					
-				res.pipe(parser);			
 
 				parser.on('end', function() {
-					Homey.app.log("parser ended")
 					var pl = parser.done();
-					Homey.app.log("parser.done")
-					//Homey.app.log(pl)
 					var result = {
 						type: 'photolist',
 						url: feedurl,
@@ -341,16 +366,10 @@ function readfeed(feedurl) { //returns an array of playlists
 				parser.on('error', err => { Homey.app.log(err) })
 				
 				resolve(result);
-				});	
+				});
 			});	
-		}			
-			
-			
-			
-	}
-	
-	
-	);
+		}					
+	});
 };
 
 
@@ -372,23 +391,18 @@ function parseTracks(tracks, feedurl) {
 }
 
 function parseTrack(track,feedurl) {
-
 	//create data-items
 	var item = track.description
     var pubdate = track.pubdate || ""
-	item.replace(/</g,'&lt;').replace(/>/g,'&gt;')
-	var patt = /src="([^"]+)"/g
-	var c2 = item.match(patt);
-	Homey.app.log(c2)
+	var c2 = getimages(item);
 	if (c2 != null) {
-	for (var j = 0, len2 = c2.length; j < len2; j++) {
-		var turl = c2[j].substring(5,c2[j].length-1)
-		var tobj = {'source': feedurl, 'item': turl, 'tijd': pubdate, 'pctitle': track.title};
-		console.log(tobj)
-		data.push(tobj)
+		for (var j = 0, len2 = c2.length; j < len2; j++) {
+			var turl = c2[j].substring(5,c2[j].length-1)
+			var tobj = {'source': feedurl, 'item': turl, 'tijd': pubdate, 'pctitle': track.title};
+			//console.log(tobj)
+			data.push(tobj)
+		}
 	}
-	}
-			
 	return {
 		type: 'track',
 		id: track.guid,
@@ -396,6 +410,19 @@ function parseTrack(track,feedurl) {
 		description: track.description,
 		release_date: dateformat(track.pubdate || ""),
 	}
+}
+
+function getimages(item) {
+	item.replace(/</g,'&lt;').replace(/>/g,'&gt;')
+	var patt = /src="([^"]+)"/g
+	var c2 = item.match(patt);
+	return c2
+}
+
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
 }
 
 function hmsToSecondsOnly(str) {
