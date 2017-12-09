@@ -18,11 +18,10 @@ Trigger on new pictures
 https://www.pinterest.co.uk/gabydmxx/the-big-bang-theory.rss/  
 https://nl.pinterest.com/sventhesearcher/kaley-cuoco.rss/  
 https://nl.pinterest.com/hoefhoef/btvs.rss/   
-https://greenpeace.tumblr.com/rss
-https://nl.pinterest.com/acehundscheid/marijke-helwegen.rss/
-http://ancilliatiliacurves.tumblr.com/rss
-http://syndication.eonline.com/syndication/feeds/rssfeeds/style.xml
-https://websta.me/rss/tag/klokgebouw
+https://greenpeace.tumblr.com/rss  
+https://nl.pinterest.com/acehundscheid/marijke-helwegen.rss/  
+http://syndication.eonline.com/syndication/feeds/rssfeeds/style.xml  
+https://websta.me/rss/tag/klokgebouw  
 
 ## to do:
 * add more pics, **never enough !**  
