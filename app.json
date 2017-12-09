@@ -3,14 +3,14 @@
     "sdk": 2,
     "name": {
         "en": "slideshow",
-		"nl": "slideshow"
+		"nl": "fotoshow"
     },
     "description": {
         "en": "View a slideshow of for example our favourite Dutch politician",
 		"nl": "Kijk naar een fotoshow van bijvoorbeeld onze favoriete Nederlandse politica"
     },
     "category": "tools",
-    "version": "0.1.8",
+    "version": "0.2.1",
     "compatibility": ">=1.5.0",
     "author": {
         "name": "Rocodamelshe",
@@ -25,8 +25,8 @@
 			{
 				"id": "new_slideshow_pic",
 				"title": {
-					"en": "There's a new slideshow pic",
-					"nl": "Er is een nieuwe slideshow foto"
+					"en": "show new picture",
+					"nl": "Laat nieuwe afbeelding zien"
 				},
 				"tokens": [
 					{
@@ -35,7 +35,7 @@
 						"example": "https://en.wikipedia.org/wiki/Effects_of_global_warming#/media/File:Diagram_showing_ten_indicators_of_global_warming.png",
 						"title": {
 							"en": "latest pic",
-							"nl": "nieuwste foto"
+							"nl": "nieuwste afbeelding"
 						}
 					},
 					{
@@ -43,8 +43,52 @@
 						"type": "string",
 						"example": "global warming pics",
 						"title": {
-							"en": "pic-title",
-							"nl": "foto-naam"
+							"en": "picture-title",
+							"nl": "afbeelding-naam"
+						}
+					},
+					{
+						"name": "tijd",
+						"type": "string",
+						"example": "05-12-2017",
+						"title": {
+							"en": "time",
+							"nl": "tijd"
+						}
+					}
+				]
+			},{
+				"id": "new_slideshow_pic_spotted",
+				"title": {
+					"en": "There's a new picture spotted",
+					"nl": "Er is een nieuwe afbeelding gespot"
+				},
+				"tokens": [
+					{
+						"name": "item",
+						"type": "string",
+						"example": "https://en.wikipedia.org/wiki/Effects_of_global_warming#/media/File:Diagram_showing_ten_indicators_of_global_warming.png",
+						"title": {
+							"en": "latest picture",
+							"nl": "nieuwste afbeelding"
+						}
+					},
+					{
+						"name": "pictitle",
+						"type": "string",
+						"example": "global warming pic",
+						"title": {
+							"en": "picture-title",
+							"nl": "afbeelding-naam"
+						}
+					},
+					{
+						"name": "pcname",
+						"type": "string",
+						"example": "global warming",
+						"title": {
+							"en": "show-name",
+							"nl": "show-naam"
 						}
 					},
 					{
