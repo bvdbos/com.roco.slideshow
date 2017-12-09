@@ -3,7 +3,7 @@
     "sdk": 2,
     "name": {
         "en": "slideshow",
-		"nl": "fotoshow"
+		"nl": "slideshow"
     },
     "description": {
         "en": "View a slideshow of for example our favourite Dutch politician",
