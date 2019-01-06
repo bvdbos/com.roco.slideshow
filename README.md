@@ -1,4 +1,4 @@
-# com.roco.slideshow# Slideshow  
+# Slideshow  
 Show a slideshow (for example on your chromecast)  
 
 ## Usage
@@ -38,3 +38,4 @@ v0.1.7 (05-12-2017) Added examples for flow testing
 v0.1.8 (05-12-2017) allow for http-urls too  
 v0.2.0 (09-12-2017) added triggercard for new submissions, deleted global token  
 v0.2.1 (09-12-2017) better pic-recognition, support websta.me (instagram)
+v0.2.2 (06-01-2019) fix for 2.0
